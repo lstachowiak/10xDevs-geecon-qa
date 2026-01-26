@@ -1,5 +1,6 @@
 <tech-stack>
-Frontend:
+
+Frontend
 - Astro 5
 - React 19
 - typescript 5
@@ -12,4 +13,5 @@ Backend i baza danych
 CI/CD i Hosting:
 - Github Actions
 - DigitalOceans
+
 </tech-stack>
