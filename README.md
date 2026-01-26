@@ -1,94 +1,120 @@
-# 10x Astro Starter
+# GeeCON Q&A
 
-A modern, opinionated starter template for building fast, accessible, and AI-friendly web applications.
+A web application to streamline Q&A sessions at the GeeCON conference, allowing attendees to anonymously submit and upvote questions online.
+
+## Table of Contents
+
+* [Project Description](#project-description)
+* [Tech Stack](#tech-stack)
+* [Getting Started Locally](#getting-started-locally)
+* [Available Scripts](#available-scripts)
+* [Project Scope](#project-scope)
+* [Project Status](#project-status)
+* [License](#license)
+
+## Project Description
+
+This project aims to enhance the Q&A experience during GeeCON conference sessions. It provides a platform for attendees to ask questions anonymously and vote for the ones they find most interesting. This helps moderators and speakers prioritize and address the most popular questions in real time.
+
+### Key Features
+
+**Attendees**
+
+* Access a session via a unique URL
+* Submit questions (anonymously or with a name)
+* Upvote questions from other attendees
+
+**Moderators & Speakers**
+
+* Log in to a dedicated panel
+* Manage sessions
+* View incoming questions in real time
+* Mark questions as answered
+* Remove inappropriate content
 
 ## Tech Stack
 
-- [Astro](https://astro.build/) v5.5.5 - Modern web framework for building fast, content-focused websites
-- [React](https://react.dev/) v19.0.0 - UI library for building interactive components
-- [TypeScript](https://www.typescriptlang.org/) v5 - Type-safe JavaScript
-- [Tailwind CSS](https://tailwindcss.com/) v4.0.17 - Utility-first CSS framework
+### Frontend
 
-## Prerequisites
+* Astro 5
+* React 19
+* TypeScript 5
+* Tailwind CSS 4
+* shadcn/ui
 
-- Node.js v22.14.0 (as specified in `.nvmrc`)
-- npm (comes with Node.js)
+### Backend & Database
 
-## Getting Started
+* Supabase (PostgreSQL)
 
-1. Clone the repository:
+### CI/CD & Hosting
 
-```bash
-git clone https://github.com/przeprogramowani/10x-astro-starter.git
-cd 10x-astro-starter
-```
+* GitHub Actions
+* DigitalOcean
 
-2. Install dependencies:
+## Getting Started Locally
+
+To set up and run the project on your local machine, follow these steps.
+
+### Prerequisites
+
+* **Node.js**: The required version is specified in the `.nvmrc` file. We recommend using [nvm](https://github.com/nvm-sh/nvm) (Node Version Manager).
+* **Package Manager**: npm
+
+### Installation
+
+Clone the repository and install dependencies:
 
 ```bash
 npm install
 ```
 
-3. Run the development server:
+### Running the Application
+
+To start the development server, run:
 
 ```bash
 npm run dev
 ```
 
-4. Build for production:
+The application will be available at:
 
-```bash
-npm run build
+```
+http://localhost:4321
 ```
 
 ## Available Scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Fix ESLint issues
+The following scripts are available in the `package.json` file:
 
-## Project Structure
+* `npm run dev` – Starts the development server
+* `npm run build` – Builds the application for production
+* `npm run preview` – Serves the production build locally for preview
+* `npm run lint` – Lints the codebase for errors
+* `npm run lint:fix` – Lints the codebase and automatically fixes issues
+* `npm run format` – Formats the code using Prettier
 
-```md
-.
-├── src/
-│   ├── layouts/    # Astro layouts
-│   ├── pages/      # Astro pages
-│   │   └── api/    # API endpoints
-│   ├── components/ # UI components (Astro & React)
-│   └── assets/     # Static assets
-├── public/         # Public assets
-```
+## Project Scope
 
-## AI Development Support
+### In Scope (MVP)
 
-This project is configured with AI development tools to enhance the development experience, providing guidelines for:
+* Creation and moderation of Q&A sessions for individual presentations
+* Anonymous question submission and upvoting
+* Moderator panel for real-time question management
+* Invite-only registration system for new moderators
 
-- Project structure
-- Coding practices
-- Frontend development
-- Styling with Tailwind
-- Accessibility best practices
-- Astro and React guidelines
+### Out of Scope (MVP)
 
-### Cursor IDE
+* Parallel support for multiple conference rooms with a synchronized schedule
+* Email or push notifications
+* Integration with external conference management systems
+* Advanced analytics beyond question counts
 
-The project includes AI rules in `.cursor/rules/` directory that help Cursor IDE understand the project structure and provide better code suggestions.
+## Project Status
 
-### GitHub Copilot
+**Current Stage:** In Development
 
-AI instructions for GitHub Copilot are available in `.github/copilot-instructions.md`
-
-### Windsurf
-
-The `.windsurfrules` file contains AI configuration for Windsurf.
-
-## Contributing
-
-Please follow the AI guidelines and coding practices defined in the AI configuration files when contributing to this project.
+This project is currently under active development for the Minimum Viable Product (MVP) release.
 
 ## License
 
-MIT
+This project is licensed under the MIT License. See the `LICENSE` file for more details.
