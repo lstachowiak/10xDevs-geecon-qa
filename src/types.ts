@@ -1,11 +1,11 @@
 /**
  * DTO (Data Transfer Object) and Command Model Type Definitions
- * 
+ *
  * This file contains all type definitions for API requests and responses.
  * All DTOs are derived from database entities to ensure type safety and consistency.
  */
 
-import type { Tables, Enums } from './db/database.types';
+import type { Tables, Enums } from "./db/database.types";
 
 // =============================================================================
 // Helper Types
@@ -30,25 +30,25 @@ type CamelCaseKeys<T> = {
  * Session entity from database with camelCase field names
  * Source: sessions table
  */
-export type SessionEntity = CamelCaseKeys<Tables<'sessions'>>;
+export type SessionEntity = CamelCaseKeys<Tables<"sessions">>;
 
 /**
  * Question entity from database with camelCase field names
  * Source: questions table
  */
-export type QuestionEntity = CamelCaseKeys<Tables<'questions'>>;
+export type QuestionEntity = CamelCaseKeys<Tables<"questions">>;
 
 /**
  * Invite entity from database with camelCase field names
  * Source: invites table
  */
-export type InviteEntity = CamelCaseKeys<Tables<'invites'>>;
+export type InviteEntity = CamelCaseKeys<Tables<"invites">>;
 
 /**
  * Invite status enum
  * Source: invite_status enum
  */
-export type InviteStatus = Enums<'invite_status'>;
+export type InviteStatus = Enums<"invite_status">;
 
 // =============================================================================
 // Common DTOs
