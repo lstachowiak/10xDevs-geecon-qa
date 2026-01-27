@@ -15,3 +15,28 @@ export const createQuestionSchema = z.object({
     .optional()
     .default('Anonymous')
 });
+
+/**
+ * Schema for validating GET /api/sessions/:slug/questions query parameters
+ * Enforces:
+ * - includeAnswered: boolean, defaults to false (only unanswered questions by default)
+ */
+export const getQuestionsQuerySchema = z.object({
+  includeAnswered: z.preprocess(
+    (val) => {
+      // Handle null/undefined -> default false
+      if (val === null || val === undefined) return false;
+      // Handle string values
+      if (typeof val === 'string') {
+        const lower = val.toLowerCase();
+        if (lower === 'true' || lower === '1') return true;
+        if (lower === 'false' || lower === '0') return false;
+        // Invalid string values should fail validation
+        return val; // Let Zod handle the error
+      }
+      // Handle boolean and numbers
+      return Boolean(val);
+    },
+    z.boolean()
+  ).default(false)
+});

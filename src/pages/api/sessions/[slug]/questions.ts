@@ -1,11 +1,115 @@
 import type { APIRoute } from 'astro';
 import { z } from 'zod';
-import { createQuestionSchema } from '@/lib/schemas/question.schema';
+import { createQuestionSchema, getQuestionsQuerySchema } from '@/lib/schemas/question.schema';
 import { getSessionBySlug } from '@/lib/services/sessions.service';
-import { createQuestion } from '@/lib/services/questions.service';
-import type { ErrorResponseDTO, QuestionDTO } from '@/types';
+import { createQuestion, getQuestionsBySessionId } from '@/lib/services/questions.service';
+import type { ErrorResponseDTO, QuestionDTO, QuestionsListResponseDTO } from '@/types';
 
 export const prerender = false;
+
+/**
+ * GET /api/sessions/:slug/questions
+ * Public endpoint to retrieve all questions for a session
+ * Optional filtering to hide answered questions
+ */
+export const GET: APIRoute = async ({ params, request, locals }) => {
+  try {
+    // Extract slug from path parameters
+    const { slug } = params;
+
+    if (!slug) {
+      const errorResponse: ErrorResponseDTO = {
+        error: 'Validation failed',
+        details: { slug: 'Slug parameter is required' }
+      };
+      return new Response(JSON.stringify(errorResponse), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Parse and validate query parameters
+    const url = new URL(request.url);
+    const queryParams = {
+      includeAnswered: url.searchParams.get('includeAnswered')
+    };
+
+    let validated;
+    try {
+      validated = getQuestionsQuerySchema.parse(queryParams);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const errorResponse: ErrorResponseDTO = {
+          error: 'Validation failed',
+          details: Object.fromEntries(
+            error.errors.map(e => [e.path.join('.'), e.message])
+          )
+        };
+        return new Response(JSON.stringify(errorResponse), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+      throw error;
+    }
+
+    const { includeAnswered } = validated;
+
+    // Get Supabase client from locals
+    const supabase = locals.supabase;
+
+    // Verify session exists
+    const session = await getSessionBySlug(supabase, slug);
+
+    if (!session) {
+      const errorResponse: ErrorResponseDTO = {
+        error: 'Session not found'
+      };
+      return new Response(JSON.stringify(errorResponse), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Get questions for the session
+    const questions = await getQuestionsBySessionId(
+      supabase, 
+      session.id, 
+      includeAnswered
+    );
+
+    // Prepare response
+    const response: QuestionsListResponseDTO = {
+      data: questions
+    };
+
+    // Return response with cache headers for optimization
+    return new Response(JSON.stringify(response), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=30, s-maxage=60'
+      }
+    });
+
+  } catch (error) {
+    // Log error for monitoring
+    console.error('[GET /api/sessions/:slug/questions]', {
+      slug: params.slug,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: new Date().toISOString()
+    });
+
+    // Return generic error response
+    const errorResponse: ErrorResponseDTO = {
+      error: 'Internal server error'
+    };
+    return new Response(JSON.stringify(errorResponse), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+};
 
 export const POST: APIRoute = async ({ params, request, locals }) => {
   try {
