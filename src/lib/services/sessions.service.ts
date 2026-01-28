@@ -6,13 +6,33 @@ import type { GetSessionsQuery } from "@/lib/schemas/session.schema";
  * Get session by unique URL slug
  * @param supabase - Supabase client instance
  * @param slug - Unique URL slug for the session
- * @returns Session with id or null if not found
+ * @returns Full session DTO or null if not found
  */
-export async function getSessionBySlug(supabase: SupabaseClient, slug: string): Promise<{ id: string } | null> {
-  const { data, error } = await supabase.from("sessions").select("id").eq("unique_url_slug", slug).single();
+export async function getSessionBySlug(supabase: SupabaseClient, slug: string): Promise<SessionDTO | null> {
+  const { data, error } = await supabase
+    .from("sessions")
+    .select("id, name, speaker, description, session_date, unique_url_slug, created_at")
+    .eq("unique_url_slug", slug)
+    .single();
 
-  if (error || !data) return null;
-  return data;
+  if (error) {
+    if (error.code === "PGRST116") {
+      // Not found
+      return null;
+    }
+    throw error;
+  }
+
+  // Transform snake_case to camelCase
+  return {
+    id: data.id,
+    name: data.name,
+    speaker: data.speaker,
+    description: data.description,
+    sessionDate: data.session_date,
+    uniqueUrlSlug: data.unique_url_slug,
+    createdAt: data.created_at,
+  };
 }
 
 /**
@@ -40,9 +60,7 @@ export async function getAllSessions(
   const offset = (page - 1) * limit;
 
   // Get total count
-  const { count, error: countError } = await supabase
-    .from("sessions")
-    .select("*", { count: "exact", head: true });
+  const { count, error: countError } = await supabase.from("sessions").select("*", { count: "exact", head: true });
 
   if (countError) {
     throw new Error(`Failed to fetch sessions count: ${countError.message}`);

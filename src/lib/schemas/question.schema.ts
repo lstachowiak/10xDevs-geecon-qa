@@ -37,3 +37,18 @@ export const getQuestionsQuerySchema = z.object({
     }, z.boolean())
     .default(false),
 });
+
+/**
+ * Schema for validating UpdateQuestionCommand
+ * Enforces:
+ * - isAnswered: optional boolean flag
+ */
+export const updateQuestionSchema = z.object({
+  isAnswered: z.boolean().optional(),
+});
+
+/**
+ * Schema for validating UUID parameter in path
+ * Used for validating question IDs in API routes
+ */
+export const idParamSchema = z.string().uuid("Invalid UUID format");

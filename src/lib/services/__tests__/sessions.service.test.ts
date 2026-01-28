@@ -17,9 +17,17 @@ describe("sessions.service", () => {
       };
     });
 
-    it("should return session with id when session exists", async () => {
+    it("should return full SessionDTO when session exists", async () => {
       // Arrange
-      const mockSessionData = { id: "session-123" };
+      const mockSessionData = {
+        id: "session-123",
+        name: "Test Session",
+        speaker: "John Doe",
+        description: "Test description",
+        session_date: "2026-01-27T10:00:00Z",
+        unique_url_slug: "test-slug",
+        created_at: "2026-01-26T10:00:00Z",
+      };
       mockSupabase.single.mockResolvedValue({
         data: mockSessionData,
         error: null,
@@ -29,18 +37,28 @@ describe("sessions.service", () => {
       const result = await getSessionBySlug(mockSupabase as unknown as SupabaseClient, "test-slug");
 
       // Assert
-      expect(result).toEqual({ id: "session-123" });
+      expect(result).toEqual({
+        id: "session-123",
+        name: "Test Session",
+        speaker: "John Doe",
+        description: "Test description",
+        sessionDate: "2026-01-27T10:00:00Z",
+        uniqueUrlSlug: "test-slug",
+        createdAt: "2026-01-26T10:00:00Z",
+      });
       expect(mockSupabase.from).toHaveBeenCalledWith("sessions");
-      expect(mockSupabase.select).toHaveBeenCalledWith("id");
+      expect(mockSupabase.select).toHaveBeenCalledWith(
+        "id, name, speaker, description, session_date, unique_url_slug, created_at"
+      );
       expect(mockSupabase.eq).toHaveBeenCalledWith("unique_url_slug", "test-slug");
       expect(mockSupabase.single).toHaveBeenCalled();
     });
 
-    it("should return null when session does not exist", async () => {
+    it("should return null when session does not exist (PGRST116 error)", async () => {
       // Arrange
       mockSupabase.single.mockResolvedValue({
         data: null,
-        error: { message: "Not found" },
+        error: { code: "PGRST116", message: "Not found" },
       });
 
       // Act
@@ -50,32 +68,18 @@ describe("sessions.service", () => {
       expect(result).toBeNull();
     });
 
-    it("should return null when error occurs", async () => {
+    it("should throw error on database failure (non-PGRST116 error)", async () => {
       // Arrange
       mockSupabase.single.mockResolvedValue({
         data: null,
-        error: { message: "Database error" },
+        error: { code: "DB_ERROR", message: "Database error" },
       });
 
-      // Act
-      const result = await getSessionBySlug(mockSupabase as unknown as SupabaseClient, "any-slug");
-
-      // Assert
-      expect(result).toBeNull();
-    });
-
-    it("should return null when data is null even without error", async () => {
-      // Arrange
-      mockSupabase.single.mockResolvedValue({
-        data: null,
-        error: null,
+      // Act & Assert
+      await expect(getSessionBySlug(mockSupabase as unknown as SupabaseClient, "any-slug")).rejects.toEqual({
+        code: "DB_ERROR",
+        message: "Database error",
       });
-
-      // Act
-      const result = await getSessionBySlug(mockSupabase as unknown as SupabaseClient, "any-slug");
-
-      // Assert
-      expect(result).toBeNull();
     });
   });
 

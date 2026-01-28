@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@/db/supabase.client";
-import type { CreateQuestionCommand, QuestionDTO, UpvoteResponseDTO } from "@/types";
+import type { CreateQuestionCommand, QuestionDTO, UpvoteResponseDTO, UpdateQuestionCommand } from "@/types";
 
 /**
  * Create a new question for a session
@@ -120,5 +120,47 @@ export async function upvoteQuestion(supabase: SupabaseClient, id: string): Prom
   return {
     id: data.id,
     upvoteCount: data.upvote_count,
+  };
+}
+
+/**
+ * Update question properties
+ * @param supabase - Supabase client instance
+ * @param id - ID of the question to update
+ * @param command - Update data from request
+ * @returns Updated question as QuestionDTO
+ * @throws Error if question not found or database operation fails
+ */
+export async function updateQuestion(
+  supabase: SupabaseClient,
+  id: string,
+  command: UpdateQuestionCommand
+): Promise<QuestionDTO> {
+  // Build update object only with provided fields
+  const updateData: Record<string, unknown> = {};
+  if (command.isAnswered !== undefined) {
+    updateData.is_answered = command.isAnswered;
+  }
+
+  // Perform update and return data in one query
+  const { data, error } = await supabase.from("questions").update(updateData).eq("id", id).select().single();
+
+  // Check if question was found
+  if (error) {
+    if (error.code === "PGRST116") {
+      throw new Error("Question not found");
+    }
+    throw new Error(`Failed to update question: ${error.message}`);
+  }
+
+  // Transform snake_case to camelCase
+  return {
+    id: data.id,
+    sessionId: data.session_id,
+    content: data.content,
+    authorName: data.author_name,
+    isAnswered: data.is_answered,
+    upvoteCount: data.upvote_count,
+    createdAt: data.created_at,
   };
 }

@@ -657,12 +657,9 @@ describe("GET /api/sessions", () => {
 
       vi.mocked(getAllSessions).mockResolvedValue(mockSessionsResponse);
 
-      const mockRequest = new Request(
-        "http://localhost/api/sessions?page=3&limit=15&sortBy=name&sortOrder=asc",
-        {
-          method: "GET",
-        }
-      );
+      const mockRequest = new Request("http://localhost/api/sessions?page=3&limit=15&sortBy=name&sortOrder=asc", {
+        method: "GET",
+      });
 
       // Act
       const response = await GET({
