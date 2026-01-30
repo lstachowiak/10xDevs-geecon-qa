@@ -9,70 +9,133 @@ Najpierw przejrzyj następujące informacje:
 
 2. Opis widoku:
 <view_description>
-### Widok 1: Strona Główna (dla uczestnika)
-- **Nazwa widoku:** Strona Główna
-- **Ścieżka widoku:** `/`
-- **Główny cel:** Umożliwienie uczestnikowi szybkiego dołączenia do sesji Q&A.
-- **Kluczowe informacje do wyświetlenia:**
-    - Tytuł aplikacji.
-    - Krótka instrukcja dla użytkownika.
+### Widok 7: Panel Moderatora - Zarządzanie Pytaniami
+- **Nazwa widoku:** Zarządzanie Pytaniami
+- **Ścieżka widoku:** `/moderator/sessions/[id]`
+- **Główny cel:** Moderowanie pytań w czasie rzeczywistym.
+- **Kluczowe informacje do wyświetlenia:** Lista pytań z opcjami moderacji.
 - **Kluczowe komponenty widoku:**
-    - `Input`: Pole do wprowadzenia kodu (slug) sesji.
-    - `Button`: Przycisk do zatwierdzenia kodu i przejścia do sesji.
-    - `Toast`: Komponent do wyświetlania powiadomień o błędach (np. nie znaleziono sesji).
+    - `Table` lub `Card List`: Lista pytań z treścią, autorem i liczbą głosów.
+    - `Switch`: Przełącznik do oznaczania pytania jako "odpowiedziane".
+    - `Button` z ikoną kosza do usuwania pytania.
+    - `AlertDialog`: Modal potwierdzający usunięcie pytania.
 - **UX, dostępność i względy bezpieczeństwa:**
-    - **UX:** Minimalistyczny interfejs skupiony na jednej akcji. Automatyczne przekierowanie po poprawnym wprowadzeniu kodu.
-    - **Dostępność:** Pole `Input` i `Button` będą miały odpowiednie etykiety (`aria-label`) dla czytników ekranu.
-    - **Bezpieczeństwo:** Walidacja po stronie serwera, aby zapobiec próbom odgadnięcia kodów sesji.
-
+    - **UX:** Zmiany (oznaczenie jako odpowiedziane, usunięcie) są natychmiast widoczne.
+    - **Dostępność:** Interaktywne elementy (`Switch`, `Button`) będą miały etykiety `aria-label`.
+    - **Bezpieczeństwo:** Wszystkie akcje moderacyjne wymagają uwierzytelnienia.
 </view_description>
 
 3. User Stories:
 <user_stories>
-### US-000. Wejście na stronę główną
-Opis: Jako uczestnik chcę móc przejść na stronę sesji po wpisaniu kodu (slug) na stronie głównej
+### US-007. Zarządzanie pytaniami
+Opis: Jako moderator chcę przeglądać i oznaczać pytania, aby przygotować się do odpowiedzi.
 Kryteria akceptacji:
-- Gdy wpiszę unikalny slug na stronie głównej, zostaję przeniesiony na stronę z nazwą prelekcji i formularzem pytania.
-- Próba wejścia na nieistniejącą sesję wyświetla jednoznaczny komunikat błędu.
+- Lista pytań pokazuje treść, nadawcę, liczbę upvote i znacznik czasu.
+- Mogę oznaczyć pytanie jako answered; status zmienia się u wszystkich użytkowników.
+- Oznaczenie można cofnąć w razie pomyłki.
 
-### US-001. Wejście na stronę sesji
-Opis: Jako uczestnik chcę szybko wejść na stronę Q&A danej prelekcji, aby zadawać pytania.
+### US-008. Usuwanie pytań
+Opis: Jako moderator chcę usuwać nieodpowiednie pytania, aby utrzymać porządek.
 Kryteria akceptacji:
-- Gdy wpiszę unikalny slug na stronie głównej, zostaję przeniesiony na stronę z nazwą prelekcji i formularzem pytania.
-- Link jest niepowtarzalny dla każdej prelekcji i pozostaje ważny do zakończenia konferencji.
-- Próba wejścia na nieistniejącą sesję wyświetla jednoznaczny komunikat błędu.
-
+- Każde pytanie ma akcję usuń z potwierdzeniem.
+- Po usunięciu pytanie znika z listy użytkowników i archiwum.
 </user_stories>
 
 4. Endpoint Description:
 <endpoint_description>
-
-#### GET /api/sessions/:slug
-Retrieve a single session by its unique URL slug (public access).
+#### GET /api/sessions/:slug/questions
+Retrieve all questions for a specific session (public access).
 
 **Parameters:**
 - Path: `slug` (string) - unique URL identifier for the session
+
+**Query Parameters:**
+- `includeAnswered` (boolean, optional, default: false) - whether to include answered questions
+
+**Response (200 OK):**
+```json
+{
+  "data": [
+    {
+      "id": "uuid",
+      "sessionId": "uuid",
+      "content": "What is the difference between REST and GraphQL?",
+      "authorName": "Jane Smith",
+      "isAnswered": false,
+      "upvoteCount": 42,
+      "createdAt": "2026-01-26T10:30:00Z"
+    },
+    {
+      "id": "uuid",
+      "sessionId": "uuid",
+      "content": "How do you handle authentication in GraphQL?",
+      "authorName": "Anonymous",
+      "isAnswered": true,
+      "upvoteCount": 38,
+      "createdAt": "2026-01-26T10:25:00Z"
+    }
+  ]
+}
+```
+
+**Business Logic:**
+- Questions are sorted by `upvoteCount DESC, createdAt ASC`
+- If `includeAnswered=false`, filter out questions where `isAnswered=true`
+
+**Error Responses:**
+- `404 Not Found` - Session with given slug does not exist
+
+---
+
+#### PATCH /api/questions/:id
+Update question properties (moderator only - authenticated).
+
+**Parameters:**
+- Path: `id` (uuid) - question identifier
+
+**Request Body:**
+```json
+{
+  "isAnswered": true
+}
+```
+
+**Validation:**
+- `isAnswered`: optional, boolean
 
 **Response (200 OK):**
 ```json
 {
   "id": "uuid",
-  "name": "Introduction to GraphQL",
-  "speaker": "John Doe",
-  "description": "Learn the basics of GraphQL",
-  "sessionDate": "2026-05-15T14:00:00Z",
-  "uniqueUrlSlug": "abc123xyz",
-  "createdAt": "2026-01-26T10:00:00Z"
+  "sessionId": "uuid",
+  "content": "What is the difference between REST and GraphQL?",
+  "authorName": "Jane Smith",
+  "isAnswered": true,
+  "upvoteCount": 42,
+  "createdAt": "2026-01-26T10:30:00Z"
 }
 ```
 
 **Error Responses:**
-- `404 Not Found` - Session with given slug does not exist
-```json
-{
-  "error": "Session not found"
-}
-```
+- `401 Unauthorized` - User is not authenticated
+- `404 Not Found` - Question does not exist
+- `400 Bad Request` - Invalid request body
+
+---
+
+#### DELETE /api/questions/:id
+Delete a question (moderator only - authenticated).
+
+**Parameters:**
+- Path: `id` (uuid) - question identifier
+
+**Response (204 No Content)**
+
+**Error Responses:**
+- `401 Unauthorized` - User is not authenticated
+- `404 Not Found` - Question does not exist
+
+---
 
 </endpoint_description>
 

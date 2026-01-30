@@ -48,9 +48,7 @@ export function QuestionItem({ question, onUpvote }: QuestionItemProps) {
           <div className="flex-1 space-y-2">
             <p className="text-base leading-relaxed">{question.content}</p>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>
-                {question.authorName || "Anonim"}
-              </span>
+              <span>{question.authorName || "Anonim"}</span>
               {question.isAnswered && (
                 <Badge variant="secondary" className="bg-green-100 dark:bg-green-900">
                   Odpowiedziano

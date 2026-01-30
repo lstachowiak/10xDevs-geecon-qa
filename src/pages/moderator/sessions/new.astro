@@ -1,0 +1,14 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import SessionCreator from "@/components/moderator/SessionCreator";
+
+// Disable prerendering for this page to enable server-side checks
+export const prerender = false;
+
+// Authentication is handled by middleware
+// User will be redirected to "/" if not authenticated
+---
+
+<Layout title="Create New Session - Moderator Panel">
+  <SessionCreator client:load />
+</Layout>

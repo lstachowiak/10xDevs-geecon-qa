@@ -1,11 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { PATCH } from "../index";
+import { PATCH, DELETE } from "../index";
 
 vi.mock("@/lib/services/questions.service", () => ({
   updateQuestion: vi.fn(),
+  deleteQuestion: vi.fn(),
 }));
 
-import { updateQuestion } from "@/lib/services/questions.service";
+import { updateQuestion, deleteQuestion } from "@/lib/services/questions.service";
 
 describe("PATCH /api/questions/:id", () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -424,6 +425,310 @@ describe("PATCH /api/questions/:id", () => {
 
       // Assert
       expect(response.status).toBe(400);
+      expect(response.headers.get("Content-Type")).toBe("application/json");
+    });
+  });
+});
+
+describe("DELETE /api/questions/:id", () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let mockContext: any;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockContext = {
+      params: {},
+      request: new Request("http://localhost/api/questions/test-id", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      }),
+      locals: {
+        supabase: {},
+      },
+    };
+  });
+
+  describe("Success cases (204)", () => {
+    it("should successfully delete a question", async () => {
+      // Arrange
+      mockContext.params = { id: "550e8400-e29b-41d4-a716-446655440000" };
+
+      vi.mocked(deleteQuestion).mockResolvedValue(undefined);
+
+      // Act
+      const response = await DELETE(mockContext);
+
+      // Assert
+      expect(response.status).toBe(204);
+      expect(deleteQuestion).toHaveBeenCalledWith(mockContext.locals.supabase, "550e8400-e29b-41d4-a716-446655440000");
+    });
+
+    it("should return no content body on successful deletion", async () => {
+      // Arrange
+      mockContext.params = { id: "550e8400-e29b-41d4-a716-446655440000" };
+
+      vi.mocked(deleteQuestion).mockResolvedValue(undefined);
+
+      // Act
+      const response = await DELETE(mockContext);
+      const body = await response.text();
+
+      // Assert
+      expect(response.status).toBe(204);
+      expect(body).toBe("");
+    });
+
+    it("should call deleteQuestion with correct parameters", async () => {
+      // Arrange
+      const questionId = "123e4567-e89b-12d3-a456-426614174000";
+      mockContext.params = { id: questionId };
+
+      vi.mocked(deleteQuestion).mockResolvedValue(undefined);
+
+      // Act
+      await DELETE(mockContext);
+
+      // Assert
+      expect(deleteQuestion).toHaveBeenCalledTimes(1);
+      expect(deleteQuestion).toHaveBeenCalledWith(mockContext.locals.supabase, questionId);
+    });
+  });
+
+  describe("Validation errors (400)", () => {
+    it("should return 400 when UUID is invalid", async () => {
+      // Arrange
+      mockContext.params = { id: "invalid-uuid" };
+
+      // Act
+      const response = await DELETE(mockContext);
+      const data = await response.json();
+
+      // Assert
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        error: "Validation failed",
+        details: {
+          id: "Invalid UUID format",
+        },
+      });
+      expect(deleteQuestion).not.toHaveBeenCalled();
+    });
+
+    it("should return 400 when UUID is missing", async () => {
+      // Arrange
+      mockContext.params = {};
+
+      // Act
+      const response = await DELETE(mockContext);
+      const data = await response.json();
+
+      // Assert
+      expect(response.status).toBe(400);
+      expect(data.error).toBe("Validation failed");
+      expect(data.details).toHaveProperty("id");
+      expect(deleteQuestion).not.toHaveBeenCalled();
+    });
+
+    it("should return 400 when UUID is empty string", async () => {
+      // Arrange
+      mockContext.params = { id: "" };
+
+      // Act
+      const response = await DELETE(mockContext);
+      const data = await response.json();
+
+      // Assert
+      expect(response.status).toBe(400);
+      expect(data.error).toBe("Validation failed");
+      expect(data.details).toHaveProperty("id");
+      expect(deleteQuestion).not.toHaveBeenCalled();
+    });
+
+    it("should return 400 when UUID has invalid format (too short)", async () => {
+      // Arrange
+      mockContext.params = { id: "123" };
+
+      // Act
+      const response = await DELETE(mockContext);
+      const data = await response.json();
+
+      // Assert
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        error: "Validation failed",
+        details: {
+          id: "Invalid UUID format",
+        },
+      });
+      expect(deleteQuestion).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("Not found errors (404)", () => {
+    it("should return 404 when question does not exist", async () => {
+      // Arrange
+      mockContext.params = { id: "550e8400-e29b-41d4-a716-446655440000" };
+
+      vi.mocked(deleteQuestion).mockRejectedValue(new Error("Question not found"));
+
+      // Act
+      const response = await DELETE(mockContext);
+      const data = await response.json();
+
+      // Assert
+      expect(response.status).toBe(404);
+      expect(data).toEqual({
+        error: "Question not found",
+      });
+    });
+
+    it("should return 404 for valid UUID but non-existent question", async () => {
+      // Arrange
+      mockContext.params = { id: "123e4567-e89b-12d3-a456-426614174000" };
+
+      vi.mocked(deleteQuestion).mockRejectedValue(new Error("Question not found"));
+
+      // Act
+      const response = await DELETE(mockContext);
+      const data = await response.json();
+
+      // Assert
+      expect(response.status).toBe(404);
+      expect(data.error).toBe("Question not found");
+    });
+
+    it("should verify deleteQuestion was called before returning 404", async () => {
+      // Arrange
+      mockContext.params = { id: "550e8400-e29b-41d4-a716-446655440000" };
+
+      vi.mocked(deleteQuestion).mockRejectedValue(new Error("Question not found"));
+
+      // Act
+      await DELETE(mockContext);
+
+      // Assert
+      expect(deleteQuestion).toHaveBeenCalledWith(mockContext.locals.supabase, "550e8400-e29b-41d4-a716-446655440000");
+    });
+  });
+
+  describe("Server errors (500)", () => {
+    it("should return 500 when database error occurs", async () => {
+      // Arrange
+      mockContext.params = { id: "550e8400-e29b-41d4-a716-446655440000" };
+
+      vi.mocked(deleteQuestion).mockRejectedValue(new Error("Failed to delete question: Database connection failed"));
+
+      // Act
+      const response = await DELETE(mockContext);
+      const data = await response.json();
+
+      // Assert
+      expect(response.status).toBe(500);
+      expect(data).toEqual({
+        error: "Failed to delete question",
+      });
+    });
+
+    it("should return 500 when unexpected error occurs", async () => {
+      // Arrange
+      mockContext.params = { id: "550e8400-e29b-41d4-a716-446655440000" };
+
+      vi.mocked(deleteQuestion).mockRejectedValue(new Error("Unexpected server error"));
+
+      // Act
+      const response = await DELETE(mockContext);
+      const data = await response.json();
+
+      // Assert
+      expect(response.status).toBe(500);
+      expect(data.error).toBe("Failed to delete question");
+    });
+
+    it("should handle non-Error thrown values", async () => {
+      // Arrange
+      mockContext.params = { id: "550e8400-e29b-41d4-a716-446655440000" };
+
+      vi.mocked(deleteQuestion).mockRejectedValue("String error");
+
+      // Act
+      const response = await DELETE(mockContext);
+      const data = await response.json();
+
+      // Assert
+      expect(response.status).toBe(500);
+      expect(data).toEqual({
+        error: "Failed to delete question",
+      });
+    });
+
+    it("should handle timeout errors", async () => {
+      // Arrange
+      mockContext.params = { id: "550e8400-e29b-41d4-a716-446655440000" };
+
+      vi.mocked(deleteQuestion).mockRejectedValue(new Error("Request timeout"));
+
+      // Act
+      const response = await DELETE(mockContext);
+      const data = await response.json();
+
+      // Assert
+      expect(response.status).toBe(500);
+      expect(data.error).toBe("Failed to delete question");
+    });
+  });
+
+  describe("Response headers", () => {
+    it("should not have Content-Type header on successful delete (204)", async () => {
+      // Arrange
+      mockContext.params = { id: "550e8400-e29b-41d4-a716-446655440000" };
+
+      vi.mocked(deleteQuestion).mockResolvedValue(undefined);
+
+      // Act
+      const response = await DELETE(mockContext);
+
+      // Assert
+      expect(response.status).toBe(204);
+      // 204 No Content should not have Content-Type header
+    });
+
+    it("should return correct Content-Type header on validation error", async () => {
+      // Arrange
+      mockContext.params = { id: "invalid-uuid" };
+
+      // Act
+      const response = await DELETE(mockContext);
+
+      // Assert
+      expect(response.status).toBe(400);
+      expect(response.headers.get("Content-Type")).toBe("application/json");
+    });
+
+    it("should return correct Content-Type header on not found error", async () => {
+      // Arrange
+      mockContext.params = { id: "550e8400-e29b-41d4-a716-446655440000" };
+
+      vi.mocked(deleteQuestion).mockRejectedValue(new Error("Question not found"));
+
+      // Act
+      const response = await DELETE(mockContext);
+
+      // Assert
+      expect(response.status).toBe(404);
+      expect(response.headers.get("Content-Type")).toBe("application/json");
+    });
+
+    it("should return correct Content-Type header on server error", async () => {
+      // Arrange
+      mockContext.params = { id: "550e8400-e29b-41d4-a716-446655440000" };
+
+      vi.mocked(deleteQuestion).mockRejectedValue(new Error("Database error"));
+
+      // Act
+      const response = await DELETE(mockContext);
+
+      // Assert
+      expect(response.status).toBe(500);
       expect(response.headers.get("Content-Type")).toBe("application/json");
     });
   });

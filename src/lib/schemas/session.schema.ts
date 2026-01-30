@@ -78,3 +78,23 @@ export type GetSessionsQuery = z.infer<typeof getSessionsQuerySchema>;
 export const getSessionBySlugParamsSchema = z.object({
   slug: z.string().min(1, "Slug is required and must be a non-empty string"),
 });
+
+/**
+ * Schema for validating POST /api/sessions request body
+ * Enforces:
+ * - name: non-empty string (required)
+ * - speaker: non-empty string (required)
+ * - description: optional string
+ * - sessionDate: optional ISO 8601 datetime string
+ */
+export const createSessionBodySchema = z.object({
+  name: z.string().min(1, "Session name is required"),
+  speaker: z.string().min(1, "Speaker name is required"),
+  description: z.string().optional(),
+  sessionDate: z.string().datetime({ message: "Session date must be a valid ISO 8601 datetime" }).optional(),
+});
+
+/**
+ * Type inference for validated create session request body
+ */
+export type CreateSessionBody = z.infer<typeof createSessionBodySchema>;

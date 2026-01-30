@@ -107,6 +107,7 @@ describe("sessions.service", () => {
           session_date: "2026-01-27T10:00:00Z",
           unique_url_slug: "session-1",
           created_at: "2026-01-26T10:00:00Z",
+          questions: [],
         },
         {
           id: "session-2",
@@ -116,6 +117,7 @@ describe("sessions.service", () => {
           session_date: null,
           unique_url_slug: "session-2",
           created_at: "2026-01-25T10:00:00Z",
+          questions: [{ id: "q1" }, { id: "q2" }],
         },
       ];
 
@@ -154,9 +156,11 @@ describe("sessions.service", () => {
         sessionDate: "2026-01-27T10:00:00Z",
         uniqueUrlSlug: "session-1",
         createdAt: "2026-01-26T10:00:00Z",
+        questionCount: 0,
       });
       expect(result.data[1].description).toBeNull();
       expect(result.data[1].sessionDate).toBeNull();
+      expect(result.data[1].questionCount).toBe(2);
 
       expect(mockSupabase.order).toHaveBeenCalledWith("created_at", { ascending: false });
       expect(mockSupabase.range).toHaveBeenCalledWith(0, 19);
@@ -173,6 +177,7 @@ describe("sessions.service", () => {
           session_date: "2026-01-20T10:00:00Z",
           unique_url_slug: "session-11",
           created_at: "2026-01-20T10:00:00Z",
+          questions: [],
         },
       ];
 
@@ -214,6 +219,7 @@ describe("sessions.service", () => {
           session_date: "2026-01-20T10:00:00Z",
           unique_url_slug: "session-1",
           created_at: "2026-01-26T10:00:00Z",
+          questions: [],
         },
       ];
 
@@ -255,6 +261,7 @@ describe("sessions.service", () => {
           session_date: "2026-01-20T10:00:00Z",
           unique_url_slug: "alpha-session",
           created_at: "2026-01-26T10:00:00Z",
+          questions: [],
         },
       ];
 

@@ -22,11 +22,7 @@ export function QuestionList({ questions, onUpvote }: QuestionListProps) {
       </div>
       <div className="space-y-3">
         {questions.map((question) => (
-          <QuestionItem
-            key={question.id}
-            question={question}
-            onUpvote={onUpvote}
-          />
+          <QuestionItem key={question.id} question={question} onUpvote={onUpvote} />
         ))}
       </div>
     </div>

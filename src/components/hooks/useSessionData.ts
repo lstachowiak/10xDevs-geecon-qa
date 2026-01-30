@@ -1,10 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import type {
-  SessionDTO,
-  QuestionDTO,
-  CreateQuestionCommand,
-  QuestionsListResponseDTO,
-} from "@/types";
+import type { SessionDTO, QuestionDTO, CreateQuestionCommand, QuestionsListResponseDTO } from "@/types";
 
 export interface SessionViewModel {
   name: string;
@@ -38,10 +33,7 @@ function getUpvotedQuestions(): Set<string> {
 
 function saveUpvotedQuestions(upvoted: Set<string>): void {
   try {
-    localStorage.setItem(
-      UPVOTED_QUESTIONS_KEY,
-      JSON.stringify(Array.from(upvoted))
-    );
+    localStorage.setItem(UPVOTED_QUESTIONS_KEY, JSON.stringify(Array.from(upvoted)));
   } catch {
     // Ignore localStorage errors
   }
@@ -52,9 +44,7 @@ export function useSessionData(slug: string): UseSessionDataReturn {
   const [questions, setQuestions] = useState<QuestionViewModel[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const [upvotedQuestions, setUpvotedQuestions] = useState<Set<string>>(
-    getUpvotedQuestions()
-  );
+  const [upvotedQuestions, setUpvotedQuestions] = useState<Set<string>>(getUpvotedQuestions());
 
   const fetchSession = useCallback(async () => {
     try {
@@ -73,9 +63,7 @@ export function useSessionData(slug: string): UseSessionDataReturn {
         speaker: data.speaker,
       });
     } catch (err) {
-      setError(
-        err instanceof Error ? err : new Error("Nieznany błąd")
-      );
+      setError(err instanceof Error ? err : new Error("Nieznany błąd"));
     }
   }, [slug]);
 
@@ -88,12 +76,10 @@ export function useSessionData(slug: string): UseSessionDataReturn {
       }
 
       const data: QuestionsListResponseDTO = await response.json();
-      const questionsWithUpvoteState: QuestionViewModel[] = data.data.map(
-        (q) => ({
-          ...q,
-          isUpvotedByUser: upvotedQuestions.has(q.id),
-        })
-      );
+      const questionsWithUpvoteState: QuestionViewModel[] = data.data.map((q) => ({
+        ...q,
+        isUpvotedByUser: upvotedQuestions.has(q.id),
+      }));
 
       // Sort by upvote count (descending) and then by creation date (newest first)
       const sortedQuestions = questionsWithUpvoteState.sort((a, b) => {
@@ -121,9 +107,7 @@ export function useSessionData(slug: string): UseSessionDataReturn {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-          errorData.error || "Nie udało się dodać pytania"
-        );
+        throw new Error(errorData.error || "Nie udało się dodać pytania");
       }
 
       // Refresh questions list after adding

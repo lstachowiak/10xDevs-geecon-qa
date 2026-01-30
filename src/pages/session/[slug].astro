@@ -9,8 +9,11 @@ const { slug } = Astro.params;
 if (!slug) {
   return Astro.redirect("/404");
 }
+
+// Check if user is authenticated
+const isAuthenticated = !!Astro.locals.user;
 ---
 
 <Layout title={`Sesja Q&A - ${slug}`}>
-  <SessionView slug={slug} client:load />
+  <SessionView slug={slug} isAuthenticated={isAuthenticated} client:load />
 </Layout>

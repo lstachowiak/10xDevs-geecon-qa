@@ -1,0 +1,37 @@
+---
+export const prerender = false;
+
+// Ten endpoint obsługuje callback z Supabase po potwierdzeniu rejestracji
+// lub kliknięciu w link resetowania hasła
+
+const { searchParams } = Astro.url;
+const type = searchParams.get("type");
+const token = searchParams.get("token");
+const error = searchParams.get("error");
+const errorDescription = searchParams.get("error_description");
+
+// Jeśli wystąpił błąd, przekieruj na stronę główną z komunikatem
+if (error) {
+  // Logujemy błąd dla debugowania
+  // eslint-disable-next-line no-console
+  console.error("Auth callback error:", error, errorDescription);
+  return Astro.redirect("/?error=" + encodeURIComponent(error));
+}
+
+// TODO: Po implementacji backendu - obsługa różnych typów callbacków
+// Na razie przekierowujemy na odpowiednie strony
+
+if (type === "recovery" && token) {
+  // Resetowanie hasła - przekieruj na stronę resetu z tokenem
+  return Astro.redirect(`/auth/reset-password?token=${token}`);
+}
+
+if (type === "signup" && token) {
+  // Potwierdzenie rejestracji - zaloguj użytkownika
+  // TODO: Po implementacji backendu - automatyczne logowanie
+  return Astro.redirect("/");
+}
+
+// Dla wszystkich innych przypadków przekieruj na stronę główną
+return Astro.redirect("/");
+---

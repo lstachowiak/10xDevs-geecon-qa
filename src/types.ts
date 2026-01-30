@@ -94,6 +94,18 @@ export interface SessionDTO {
 }
 
 /**
+ * Session view model for list views
+ * Extends SessionDTO with additional computed fields
+ * Used in: GET /api/sessions response (list)
+ */
+export interface SessionViewModel extends SessionDTO {
+  /**
+   * The total number of questions asked in the session
+   */
+  questionCount: number;
+}
+
+/**
  * Command to create a new session
  * Used in: POST /api/sessions request
  * Source: Partial of SessionDTO (only input fields)
@@ -110,7 +122,7 @@ export interface CreateSessionCommand {
  * Used in: GET /api/sessions response
  */
 export interface SessionListResponseDTO {
-  data: SessionDTO[];
+  data: SessionViewModel[];
   pagination: PaginationDTO;
 }
 

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { createQuestion, getQuestionsBySessionId, upvoteQuestion } from "../questions.service";
+import { createQuestion, getQuestionsBySessionId, upvoteQuestion, deleteQuestion } from "../questions.service";
 import type { SupabaseClient } from "@/db/supabase.client";
 import type { CreateQuestionCommand } from "@/types";
 
@@ -617,6 +617,132 @@ describe("questions.service", () => {
 
       // Verify UPDATE was called with 1 (0 + 1)
       expect(mockSupabase.update).toHaveBeenCalledWith({ upvote_count: 1 });
+    });
+  });
+
+  describe("deleteQuestion", () => {
+    let mockSupabase: any;
+
+    beforeEach(() => {
+      // Reset mock before each test
+      mockSupabase = {
+        from: vi.fn().mockReturnThis(),
+        delete: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+      };
+    });
+
+    it("should successfully delete a question", async () => {
+      // Arrange
+      const questionId = "question-123";
+
+      mockSupabase.eq.mockResolvedValue({
+        data: null,
+        error: null,
+      });
+
+      // Act
+      await deleteQuestion(mockSupabase as unknown as SupabaseClient, questionId);
+
+      // Assert
+      expect(mockSupabase.from).toHaveBeenCalledWith("questions");
+      expect(mockSupabase.delete).toHaveBeenCalled();
+      expect(mockSupabase.eq).toHaveBeenCalledWith("id", questionId);
+    });
+
+    it("should throw 'Question not found' when question does not exist", async () => {
+      // Arrange
+      const questionId = "non-existent-123";
+
+      mockSupabase.eq.mockResolvedValue({
+        data: null,
+        error: {
+          code: "PGRST116",
+          message: "The result contains 0 rows",
+        },
+      });
+
+      // Act & Assert
+      await expect(deleteQuestion(mockSupabase as unknown as SupabaseClient, questionId)).rejects.toThrow(
+        "Question not found"
+      );
+
+      expect(mockSupabase.from).toHaveBeenCalledWith("questions");
+      expect(mockSupabase.delete).toHaveBeenCalled();
+      expect(mockSupabase.eq).toHaveBeenCalledWith("id", questionId);
+    });
+
+    it("should throw database error when delete fails", async () => {
+      // Arrange
+      const questionId = "question-123";
+      const dbError = {
+        code: "23503",
+        message: "Foreign key constraint violation",
+      };
+
+      mockSupabase.eq.mockResolvedValue({
+        data: null,
+        error: dbError,
+      });
+
+      // Act & Assert
+      await expect(deleteQuestion(mockSupabase as unknown as SupabaseClient, questionId)).rejects.toThrow(
+        "Failed to delete question: Foreign key constraint violation"
+      );
+    });
+
+    it("should handle connection errors", async () => {
+      // Arrange
+      const questionId = "question-123";
+      const connectionError = {
+        message: "Connection timeout",
+        code: "ECONNREFUSED",
+      };
+
+      mockSupabase.eq.mockResolvedValue({
+        data: null,
+        error: connectionError,
+      });
+
+      // Act & Assert
+      await expect(deleteQuestion(mockSupabase as unknown as SupabaseClient, questionId)).rejects.toThrow(
+        "Failed to delete question: Connection timeout"
+      );
+    });
+
+    it("should complete without returning a value on successful deletion", async () => {
+      // Arrange
+      const questionId = "question-123";
+
+      mockSupabase.eq.mockResolvedValue({
+        data: null,
+        error: null,
+      });
+
+      // Act
+      const result = await deleteQuestion(mockSupabase as unknown as SupabaseClient, questionId);
+
+      // Assert
+      expect(result).toBeUndefined();
+    });
+
+    it("should handle deletion of already deleted question gracefully", async () => {
+      // Arrange
+      const questionId = "already-deleted-123";
+
+      // Supabase returns PGRST116 when trying to delete non-existent row
+      mockSupabase.eq.mockResolvedValue({
+        data: null,
+        error: {
+          code: "PGRST116",
+          message: "The result contains 0 rows",
+        },
+      });
+
+      // Act & Assert
+      await expect(deleteQuestion(mockSupabase as unknown as SupabaseClient, questionId)).rejects.toThrow(
+        "Question not found"
+      );
     });
   });
 });

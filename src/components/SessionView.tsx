@@ -3,15 +3,14 @@ import { QuestionForm } from "./QuestionForm";
 import { QuestionList } from "./QuestionList";
 import { useSessionData } from "./hooks/useSessionData";
 import { Toaster } from "@/components/ui/sonner";
-import type { CreateQuestionCommand } from "@/types";
 
 interface SessionViewProps {
   slug: string;
+  isAuthenticated?: boolean;
 }
 
-export function SessionView({ slug }: SessionViewProps) {
-  const { session, questions, isLoading, error, addQuestion, upvoteQuestion } =
-    useSessionData(slug);
+export function SessionView({ slug, isAuthenticated = false }: SessionViewProps) {
+  const { session, questions, isLoading, error, addQuestion, upvoteQuestion } = useSessionData(slug);
 
   if (isLoading) {
     return (
@@ -24,9 +23,7 @@ export function SessionView({ slug }: SessionViewProps) {
   if (error) {
     return (
       <div className="container mx-auto py-8">
-        <p className="text-center text-destructive">
-          Wystąpił błąd: {error.message}
-        </p>
+        <p className="text-center text-destructive">Wystąpił błąd: {error.message}</p>
       </div>
     );
   }
@@ -34,9 +31,7 @@ export function SessionView({ slug }: SessionViewProps) {
   if (!session) {
     return (
       <div className="container mx-auto py-8">
-        <p className="text-center text-muted-foreground">
-          Nie znaleziono sesji
-        </p>
+        <p className="text-center text-muted-foreground">Nie znaleziono sesji</p>
       </div>
     );
   }
@@ -45,7 +40,7 @@ export function SessionView({ slug }: SessionViewProps) {
     <>
       <Toaster />
       <div className="container mx-auto py-8 space-y-8">
-        <SessionHeader session={session} />
+        <SessionHeader session={session} isAuthenticated={isAuthenticated} />
         <QuestionForm onSubmit={addQuestion} />
         <QuestionList questions={questions} onUpvote={upvoteQuestion} />
       </div>

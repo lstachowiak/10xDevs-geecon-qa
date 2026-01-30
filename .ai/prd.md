@@ -82,6 +82,14 @@ Opis: Jako moderator chcę bezpiecznie zalogować się do panelu, aby zarządza�
 Kryteria akceptacji:
 - Logowanie odbywa się z użyciem emaila i hasła.
 - Hasła są przechowywane jako hash z solą.
+- Uzytkownik MOŻE przejść na stronę sesji z pytaniami bez logowania się do systemu
+- Użytkownik MOŻE przegladać pytania i zadawać nowe bez logowania się do systemu
+- Użytkownik może głosować na pytania (upvote) bez logowania się do systemu
+- Moderator musi się zalogować aby zarządzać sesjami oraz pytaniami
+- Moderator może logować się do systemu poprzez przycisk w prawym górnym rogu.
+- Użytkownik może się wylogować z systemu poprzez przycisk w prawym górnym rogu w głównym @Layout.astro.
+- Nie korzystamy z zewnętrznych serwisów logowania (np. Google, GitHub).
+- Odzyskiwanie hasła powinno być możliwe.
 
 ### US-006. Tworzenie sesji
 Opis: Jako moderator chcę utworzyć nową sesję, aby uczestnicy mogli zadawać pytania.
@@ -109,3 +117,10 @@ Kryteria akceptacji:
 - Mogę wygenerować jednorazowy link ważny przez 72 godziny.
 - Widzę stan każdego linku (aktywne, wykorzystane, wygasłe).
 - Gdy link zostanie użyty, nowy moderator ustawia hasło i może się zalogować.
+
+### US-010. Lista sesji
+Opis: Jako moderator chcę przejrzeć listę sesji dostępnych w czasie konferencji
+Kryteria akceptacji:
+- Widzę utworzone sesje wraz w ich nazwą, prelegentem, kodem (slug), godziną rozpoczęcia oraz liczbą pytań zadanych do sesji
+- Mogę łatwo skopiować kod sesji (slug) przez przycisk "kopiuj"
+- Sesje są posortowane wg godziny rozpoczęcia

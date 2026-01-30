@@ -1,9 +1,5 @@
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { AuthActions } from "./AuthActions";
 
 interface SessionViewModel {
   name: string;
@@ -12,9 +8,10 @@ interface SessionViewModel {
 
 interface SessionHeaderProps {
   session: SessionViewModel | null;
+  isAuthenticated?: boolean;
 }
 
-export function SessionHeader({ session }: SessionHeaderProps) {
+export function SessionHeader({ session, isAuthenticated = false }: SessionHeaderProps) {
   if (!session) {
     return null;
   }
@@ -22,8 +19,13 @@ export function SessionHeader({ session }: SessionHeaderProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{session.name}</CardTitle>
-        <CardDescription>Prowadzący: {session.speaker}</CardDescription>
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1">
+            <CardTitle>{session.name}</CardTitle>
+            <CardDescription>Prowadzący: {session.speaker}</CardDescription>
+          </div>
+          <AuthActions isAuthenticated={isAuthenticated} />
+        </div>
       </CardHeader>
     </Card>
   );
