@@ -52,7 +52,7 @@
 ### US-001. Wejście na stronę sesji
 Opis: Jako uczestnik chcę szybko wejść na stronę Q&A danej prelekcji, aby zadawać pytania.
 Kryteria akceptacji:
-- Gdy wpiszę unikalny URL, widzę stronę z nazwą prelekcji i formularzem pytania.
+- Gdy wpiszę unikalny slug na stronie głównej, zostaję przeniesiony na stronę z nazwą prelekcji i formularzem pytania.
 - Link jest niepowtarzalny dla każdej prelekcji i pozostaje ważny do zakończenia konferencji.
 - Próba wejścia na nieistniejącą sesję wyświetla jednoznaczny komunikat błędu.
 

@@ -1,0 +1,16 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { SessionView } from "@/components/SessionView";
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+
+if (!slug) {
+  return Astro.redirect("/404");
+}
+---
+
+<Layout title={`Sesja Q&A - ${slug}`}>
+  <SessionView slug={slug} client:load />
+</Layout>
