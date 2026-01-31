@@ -52,6 +52,15 @@ export const POST: APIRoute = async ({ params, locals }) => {
       });
     }
 
+    // Log the error
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+
+    console.error("[POST /api/questions/:id/upvote]", {
+      questionId: params.id,
+      error: errorMessage,
+      timestamp: new Date().toISOString(),
+    });
+
     // Return generic error response
     const errorResponse: ErrorResponseDTO = {
       error: "Failed to upvote question",
