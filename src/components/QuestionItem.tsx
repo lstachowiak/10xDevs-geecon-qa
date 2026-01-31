@@ -29,8 +29,8 @@ export function QuestionItem({ question, onUpvote }: QuestionItemProps) {
   };
 
   return (
-    <Card 
-      className={question.isAnswered ? "border-green-200 dark:border-green-800" : ""} 
+    <Card
+      className={question.isAnswered ? "border-green-200 dark:border-green-800" : ""}
       data-testid="question-item"
       data-question-id={question.id}
     >
@@ -48,7 +48,9 @@ export function QuestionItem({ question, onUpvote }: QuestionItemProps) {
             >
               <ArrowBigUp className={`h-4 w-4 ${isUpvoting ? "animate-pulse" : ""}`} />
             </Button>
-            <span className="text-sm font-medium tabular-nums" data-testid="question-upvote-count">{question.upvoteCount}</span>
+            <span className="text-sm font-medium tabular-nums" data-testid="question-upvote-count">
+              {question.upvoteCount}
+            </span>
           </div>
           <div className="flex-1 space-y-2">
             <p className="text-base leading-relaxed">{question.content}</p>

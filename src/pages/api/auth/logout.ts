@@ -16,7 +16,7 @@ export const POST: APIRoute = async ({ locals }) => {
           headers: {
             "Content-Type": "application/json",
           },
-        },
+        }
       );
     }
 
@@ -33,7 +33,7 @@ export const POST: APIRoute = async ({ locals }) => {
         headers: {
           "Content-Type": "application/json",
         },
-      },
+      }
     );
   }
 };

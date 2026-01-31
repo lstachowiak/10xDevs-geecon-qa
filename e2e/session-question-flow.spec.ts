@@ -20,7 +20,7 @@ test.describe("Session Question Flow", () => {
     // Act - Step 1 & 2: Join session
     await joinPage.goto();
     await joinPage.fillSessionSlug(sessionSlug);
-    
+
     // Act: Click join button (already waits for enabled state internally)
     await joinPage.joinSession();
     await joinPage.waitForNavigation();

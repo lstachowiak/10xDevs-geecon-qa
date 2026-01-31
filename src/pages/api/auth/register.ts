@@ -5,20 +5,22 @@ import { registerSchema } from "@/lib/schemas/auth.schema";
 export const prerender = false;
 
 // Schema for registration with token
-const registerWithTokenSchema = z.object({
-  email: z.string().email("Podaj poprawny adres email"),
-  password: z
-    .string()
-    .min(8, "Hasło musi mieć co najmniej 8 znaków")
-    .regex(/[A-Z]/, "Hasło musi zawierać co najmniej jedną wielką literę")
-    .regex(/[a-z]/, "Hasło musi zawierać co najmniej jedną małą literę")
-    .regex(/[0-9]/, "Hasło musi zawierać co najmniej jedną cyfrę"),
-  confirmPassword: z.string().min(1, "Potwierdzenie hasła jest wymagane"),
-  token: z.string().min(1, "Token jest wymagany"),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Hasła muszą być identyczne",
-  path: ["confirmPassword"],
-});
+const registerWithTokenSchema = z
+  .object({
+    email: z.string().email("Podaj poprawny adres email"),
+    password: z
+      .string()
+      .min(8, "Hasło musi mieć co najmniej 8 znaków")
+      .regex(/[A-Z]/, "Hasło musi zawierać co najmniej jedną wielką literę")
+      .regex(/[a-z]/, "Hasło musi zawierać co najmniej jedną małą literę")
+      .regex(/[0-9]/, "Hasło musi zawierać co najmniej jedną cyfrę"),
+    confirmPassword: z.string().min(1, "Potwierdzenie hasła jest wymagane"),
+    token: z.string().min(1, "Token jest wymagany"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Hasła muszą być identyczne",
+    path: ["confirmPassword"],
+  });
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
@@ -43,17 +45,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
           headers: {
             "Content-Type": "application/json",
           },
-        },
+        }
       );
     }
 
     // Check if token is expired
     if (new Date(invite.expires_at) < new Date()) {
       // Mark as expired
-      await locals.supabase
-        .from("invites")
-        .update({ status: "expired" })
-        .eq("id", invite.id);
+      await locals.supabase.from("invites").update({ status: "expired" }).eq("id", invite.id);
 
       return new Response(
         JSON.stringify({
@@ -64,7 +63,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
           headers: {
             "Content-Type": "application/json",
           },
-        },
+        }
       );
     }
 
@@ -77,24 +76,20 @@ export const POST: APIRoute = async ({ request, locals }) => {
     if (error) {
       return new Response(
         JSON.stringify({
-          message: error.message === "User already registered" 
-            ? "Użytkownik z tym adresem email już istnieje" 
-            : error.message,
+          message:
+            error.message === "User already registered" ? "Użytkownik z tym adresem email już istnieje" : error.message,
         }),
         {
           status: 400,
           headers: {
             "Content-Type": "application/json",
           },
-        },
+        }
       );
     }
 
     // Mark invite as used
-    await locals.supabase
-      .from("invites")
-      .update({ status: "used" })
-      .eq("id", invite.id);
+    await locals.supabase.from("invites").update({ status: "used" }).eq("id", invite.id);
 
     return new Response(JSON.stringify({ user: data.user }), {
       status: 200,
@@ -113,7 +108,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
           headers: {
             "Content-Type": "application/json",
           },
-        },
+        }
       );
     }
 
@@ -126,7 +121,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         headers: {
           "Content-Type": "application/json",
         },
-      },
+      }
     );
   }
 };

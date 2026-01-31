@@ -28,10 +28,7 @@ if (error || !invite) {
 } else if (new Date(invite.expires_at) < new Date()) {
   tokenError = "Token zaproszenia wygasł";
   // Mark as expired
-  await Astro.locals.supabase
-    .from("invites")
-    .update({ status: "expired" })
-    .eq("id", invite.id);
+  await Astro.locals.supabase.from("invites").update({ status: "expired" }).eq("id", invite.id);
 } else {
   // Extract email from token (if stored) or from query params
   email = url.searchParams.get("email") || "";
@@ -44,7 +41,11 @@ if (error || !invite) {
       <CardHeader>
         <CardTitle>Rejestracja moderatora</CardTitle>
         <CardDescription>
-          {tokenError ? "Wystąpił problem z linkiem zaproszeniowym" : "Witaj! Uzupełnij poniższe dane, aby dokończyć rejestrację."}
+          {
+            tokenError
+              ? "Wystąpił problem z linkiem zaproszeniowym"
+              : "Witaj! Uzupełnij poniższe dane, aby dokończyć rejestrację."
+          }
         </CardDescription>
       </CardHeader>
       <CardContent>

@@ -19,7 +19,7 @@ export class SessionJoinPage {
     await this.sessionSlugInput.click();
     await this.sessionSlugInput.fill(slug);
     // Use type to simulate real user input for better React state updates
-    await this.sessionSlugInput.press('End'); // Move cursor to end to trigger any pending events
+    await this.sessionSlugInput.press("End"); // Move cursor to end to trigger any pending events
   }
 
   async joinSession() {

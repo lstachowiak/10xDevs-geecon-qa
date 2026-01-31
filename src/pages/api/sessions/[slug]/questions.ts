@@ -3,7 +3,7 @@ import { z } from "zod";
 import { createQuestionSchema, getQuestionsQuerySchema } from "@/lib/schemas/question.schema";
 import { getSessionBySlug } from "@/lib/services/sessions.service";
 import { createQuestion, getQuestionsBySessionId } from "@/lib/services/questions.service";
-import type { ErrorResponseDTO, QuestionDTO, QuestionsListResponseDTO } from "@/types";
+import type { ErrorResponseDTO, QuestionsListResponseDTO } from "@/types";
 
 export const prerender = false;
 

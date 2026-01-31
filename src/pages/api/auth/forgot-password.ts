@@ -30,7 +30,7 @@ export const POST: APIRoute = async ({ request, locals, url }) => {
         headers: {
           "Content-Type": "application/json",
         },
-      },
+      }
     );
   } catch {
     // Always return success to prevent email enumeration
@@ -43,7 +43,7 @@ export const POST: APIRoute = async ({ request, locals, url }) => {
         headers: {
           "Content-Type": "application/json",
         },
-      },
+      }
     );
   }
 };

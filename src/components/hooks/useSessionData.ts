@@ -130,16 +130,14 @@ export function useSessionData(slug: string): UseSessionDataReturn {
 
       // Optimistically update the UI
       setQuestions((prevQuestions) =>
-        prevQuestions.map((q) =>
-          q.id === questionId
-            ? { ...q, upvoteCount: q.upvoteCount + 1, isUpvotedByUser: true }
-            : q
-        ).sort((a, b) => {
-          if (a.upvoteCount !== b.upvoteCount) {
-            return b.upvoteCount - a.upvoteCount;
-          }
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        })
+        prevQuestions
+          .map((q) => (q.id === questionId ? { ...q, upvoteCount: q.upvoteCount + 1, isUpvotedByUser: true } : q))
+          .sort((a, b) => {
+            if (a.upvoteCount !== b.upvoteCount) {
+              return b.upvoteCount - a.upvoteCount;
+            }
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          })
       );
 
       try {
@@ -152,20 +150,18 @@ export function useSessionData(slug: string): UseSessionDataReturn {
           const rolledBackUpvoted = new Set(upvotedQuestions);
           setUpvotedQuestions(rolledBackUpvoted);
           saveUpvotedQuestions(rolledBackUpvoted);
-          
+
           setQuestions((prevQuestions) =>
-            prevQuestions.map((q) =>
-              q.id === questionId
-                ? { ...q, upvoteCount: q.upvoteCount - 1, isUpvotedByUser: false }
-                : q
-            ).sort((a, b) => {
-              if (a.upvoteCount !== b.upvoteCount) {
-                return b.upvoteCount - a.upvoteCount;
-              }
-              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-            })
+            prevQuestions
+              .map((q) => (q.id === questionId ? { ...q, upvoteCount: q.upvoteCount - 1, isUpvotedByUser: false } : q))
+              .sort((a, b) => {
+                if (a.upvoteCount !== b.upvoteCount) {
+                  return b.upvoteCount - a.upvoteCount;
+                }
+                return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+              })
           );
-          
+
           throw new Error("Nie udało się zagłosować na pytanie");
         }
 

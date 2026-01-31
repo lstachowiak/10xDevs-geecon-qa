@@ -28,7 +28,7 @@ export class QuestionListComponent {
 
   async getQuestionByContent(content: string): QuestionItemComponent | null {
     const questions = await this.getQuestionItems().all();
-    
+
     for (const question of questions) {
       const text = await question.textContent();
       if (text?.includes(content)) {
@@ -39,7 +39,7 @@ export class QuestionListComponent {
         }
       }
     }
-    
+
     return null;
   }
 
@@ -51,16 +51,16 @@ export class QuestionListComponent {
 export class QuestionItemComponent {
   readonly page: Page;
   readonly questionId: string;
-  
+
   // Dynamic locators that will always find the current element by ID
   get container(): Locator {
     return this.page.locator(`[data-question-id="${this.questionId}"]`);
   }
-  
+
   get upvoteButton(): Locator {
     return this.container.getByTestId("question-upvote-button");
   }
-  
+
   get upvoteCount(): Locator {
     return this.container.getByTestId("question-upvote-count");
   }

@@ -22,7 +22,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
           headers: {
             "Content-Type": "application/json",
           },
-        },
+        }
       );
     }
 
@@ -35,7 +35,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         headers: {
           "Content-Type": "application/json",
         },
-      },
+      }
     );
   } catch {
     return new Response(
@@ -47,7 +47,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         headers: {
           "Content-Type": "application/json",
         },
-      },
+      }
     );
   }
 };

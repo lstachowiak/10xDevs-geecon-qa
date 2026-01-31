@@ -16,16 +16,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
     if (error) {
       return new Response(
         JSON.stringify({
-          message: error.message === "Invalid login credentials" 
-            ? "Nieprawidłowy email lub hasło" 
-            : error.message,
+          message: error.message === "Invalid login credentials" ? "Nieprawidłowy email lub hasło" : error.message,
         }),
         {
           status: 401,
           headers: {
             "Content-Type": "application/json",
           },
-        },
+        }
       );
     }
 
@@ -45,7 +43,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         headers: {
           "Content-Type": "application/json",
         },
-      },
+      }
     );
   }
 };
