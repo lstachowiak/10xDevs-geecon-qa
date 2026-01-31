@@ -68,31 +68,27 @@ export function useSessionData(slug: string): UseSessionDataReturn {
   }, [slug]);
 
   const fetchQuestions = useCallback(async () => {
-    try {
-      const response = await fetch(`/api/sessions/${slug}/questions`);
+    const response = await fetch(`/api/sessions/${slug}/questions`);
 
-      if (!response.ok) {
-        throw new Error("Nie udało się pobrać pytań");
-      }
-
-      const data: QuestionsListResponseDTO = await response.json();
-      const questionsWithUpvoteState: QuestionViewModel[] = data.data.map((q) => ({
-        ...q,
-        isUpvotedByUser: upvotedQuestions.has(q.id),
-      }));
-
-      // Sort by upvote count (descending) and then by creation date (newest first)
-      const sortedQuestions = questionsWithUpvoteState.sort((a, b) => {
-        if (a.upvoteCount !== b.upvoteCount) {
-          return b.upvoteCount - a.upvoteCount;
-        }
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      });
-
-      setQuestions(sortedQuestions);
-    } catch (err) {
-      console.error("Error fetching questions:", err);
+    if (!response.ok) {
+      throw new Error("Nie udało się pobrać pytań");
     }
+
+    const data: QuestionsListResponseDTO = await response.json();
+    const questionsWithUpvoteState: QuestionViewModel[] = data.data.map((q) => ({
+      ...q,
+      isUpvotedByUser: upvotedQuestions.has(q.id),
+    }));
+
+    // Sort by upvote count (descending) and then by creation date (newest first)
+    const sortedQuestions = questionsWithUpvoteState.sort((a, b) => {
+      if (a.upvoteCount !== b.upvoteCount) {
+        return b.upvoteCount - a.upvoteCount;
+      }
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+
+    setQuestions(sortedQuestions);
   }, [slug, upvotedQuestions]);
 
   const addQuestion = useCallback(
@@ -140,36 +136,32 @@ export function useSessionData(slug: string): UseSessionDataReturn {
           })
       );
 
-      try {
-        const response = await fetch(`/api/questions/${questionId}/upvote`, {
-          method: "POST",
-        });
+      const response = await fetch(`/api/questions/${questionId}/upvote`, {
+        method: "POST",
+      });
 
-        if (!response.ok) {
-          // Rollback on error
-          const rolledBackUpvoted = new Set(upvotedQuestions);
-          setUpvotedQuestions(rolledBackUpvoted);
-          saveUpvotedQuestions(rolledBackUpvoted);
+      if (!response.ok) {
+        // Rollback on error
+        const rolledBackUpvoted = new Set(upvotedQuestions);
+        setUpvotedQuestions(rolledBackUpvoted);
+        saveUpvotedQuestions(rolledBackUpvoted);
 
-          setQuestions((prevQuestions) =>
-            prevQuestions
-              .map((q) => (q.id === questionId ? { ...q, upvoteCount: q.upvoteCount - 1, isUpvotedByUser: false } : q))
-              .sort((a, b) => {
-                if (a.upvoteCount !== b.upvoteCount) {
-                  return b.upvoteCount - a.upvoteCount;
-                }
-                return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-              })
-          );
+        setQuestions((prevQuestions) =>
+          prevQuestions
+            .map((q) => (q.id === questionId ? { ...q, upvoteCount: q.upvoteCount - 1, isUpvotedByUser: false } : q))
+            .sort((a, b) => {
+              if (a.upvoteCount !== b.upvoteCount) {
+                return b.upvoteCount - a.upvoteCount;
+              }
+              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+            })
+        );
 
-          throw new Error("Nie udało się zagłosować na pytanie");
-        }
-
-        // Refresh questions to sync with server (in background)
-        fetchQuestions();
-      } catch (err) {
-        throw err;
+        throw new Error("Nie udało się zagłosować na pytanie");
       }
+
+      // Refresh questions to sync with server (in background)
+      fetchQuestions();
     },
     [upvotedQuestions, fetchQuestions]
   );

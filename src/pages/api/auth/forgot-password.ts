@@ -18,6 +18,7 @@ export const POST: APIRoute = async ({ request, locals, url }) => {
     // Always return success to prevent email enumeration
     // but log error for debugging
     if (error) {
+      // eslint-disable-next-line no-console
       console.error("Password reset error:", error);
     }
 

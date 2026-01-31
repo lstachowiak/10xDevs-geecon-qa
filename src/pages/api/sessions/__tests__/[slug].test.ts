@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { GET } from "../[slug]";
 
@@ -8,7 +9,6 @@ vi.mock("@/lib/services/sessions.service", () => ({
 import { getSessionBySlug } from "@/lib/services/sessions.service";
 
 describe("GET /api/sessions/:slug", () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mockContext: any;
 
   beforeEach(() => {

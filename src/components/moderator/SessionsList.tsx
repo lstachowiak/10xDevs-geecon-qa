@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import SessionsTable from "./SessionsTable.tsx";
 import EmptyState from "./EmptyState.tsx";
@@ -26,7 +26,7 @@ export default function SessionsList() {
   });
 
   // Fetch sessions from API
-  const fetchSessions = async () => {
+  const fetchSessions = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -54,12 +54,12 @@ export default function SessionsList() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [queryParams]);
 
   // Fetch sessions on mount and when query params change
   useEffect(() => {
     fetchSessions();
-  }, [queryParams]);
+  }, [queryParams, fetchSessions]);
 
   // Handle session deletion
   const handleDelete = async (sessionId: string) => {
@@ -79,7 +79,7 @@ export default function SessionsList() {
       toast.success("Session deleted successfully");
       // Refresh the list after deletion
       fetchSessions();
-    } catch (err) {
+    } catch {
       toast.error("Failed to delete session");
     }
   };
@@ -89,7 +89,7 @@ export default function SessionsList() {
     try {
       await navigator.clipboard.writeText(slug);
       toast.success("Slug copied to clipboard");
-    } catch (err) {
+    } catch {
       toast.error("Failed to copy slug");
     }
   };

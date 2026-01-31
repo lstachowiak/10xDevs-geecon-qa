@@ -88,6 +88,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
     });
   } catch (error) {
     // Log error details server-side (not exposed to client)
+    // eslint-disable-next-line no-console
     console.error("GET /api/sessions failed:", {
       error: error instanceof Error ? error.message : "Unknown error",
       stack: error instanceof Error ? error.stack : undefined,
@@ -199,6 +200,7 @@ export const DELETE: APIRoute = async ({ request, locals }) => {
     });
   } catch (error) {
     // Log error details server-side
+    // eslint-disable-next-line no-console
     console.error("DELETE /api/sessions failed:", {
       error: error instanceof Error ? error.message : "Unknown error",
       stack: error instanceof Error ? error.stack : undefined,
@@ -318,6 +320,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     });
   } catch (error) {
     // Log error details server-side
+    // eslint-disable-next-line no-console
     console.error("POST /api/sessions failed:", {
       error: error instanceof Error ? error.message : "Unknown error",
       stack: error instanceof Error ? error.stack : undefined,

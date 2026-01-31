@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { PATCH, DELETE } from "../index";
 
@@ -9,7 +10,6 @@ vi.mock("@/lib/services/questions.service", () => ({
 import { updateQuestion, deleteQuestion } from "@/lib/services/questions.service";
 
 describe("PATCH /api/questions/:id", () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mockContext: any;
 
   beforeEach(() => {
@@ -431,7 +431,6 @@ describe("PATCH /api/questions/:id", () => {
 });
 
 describe("DELETE /api/questions/:id", () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mockContext: any;
 
   beforeEach(() => {

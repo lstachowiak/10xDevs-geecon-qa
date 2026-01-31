@@ -33,7 +33,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         "Content-Type": "application/json",
       },
     });
-  } catch (error) {
+  } catch {
     return new Response(
       JSON.stringify({
         message: "Wystąpił błąd podczas logowania",

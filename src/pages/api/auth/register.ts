@@ -1,6 +1,5 @@
 import type { APIRoute } from "astro";
 import { z } from "zod";
-import { registerSchema } from "@/lib/schemas/auth.schema";
 
 export const prerender = false;
 

@@ -38,8 +38,7 @@ export default function SessionSummary({ session }: SessionSummaryProps) {
       setTimeout(() => {
         setCopied(false);
       }, 2000);
-    } catch (err) {
-      console.error("Failed to copy link:", err);
+    } catch {
       toast.error("Failed to copy link", {
         description: "Please try selecting and copying the URL manually",
       });

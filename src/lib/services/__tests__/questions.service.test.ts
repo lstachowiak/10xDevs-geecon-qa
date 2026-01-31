@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { createQuestion, getQuestionsBySessionId, upvoteQuestion, deleteQuestion } from "../questions.service";
 import type { SupabaseClient } from "@/db/supabase.client";

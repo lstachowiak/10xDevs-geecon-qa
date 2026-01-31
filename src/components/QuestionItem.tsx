@@ -20,7 +20,7 @@ export function QuestionItem({ question, onUpvote }: QuestionItemProps) {
       try {
         await onUpvote(question.id);
         toast.success("Zagłosowano na pytanie!");
-      } catch (err) {
+      } catch {
         toast.error("Nie udało się zagłosować");
       } finally {
         setIsUpvoting(false);

@@ -78,6 +78,7 @@ export const PATCH: APIRoute = async ({ params, request, locals }) => {
   } catch (error) {
     // Handle question not found error
     if (error instanceof Error && error.message === "Question not found") {
+      // eslint-disable-next-line no-console
       console.error("[PATCH /api/questions/:id]", {
         questionId: params.id,
         error: "Question not found",
@@ -94,6 +95,7 @@ export const PATCH: APIRoute = async ({ params, request, locals }) => {
     }
 
     // Handle other server errors
+    // eslint-disable-next-line no-console
     console.error("[PATCH /api/questions/:id]", {
       questionId: params.id,
       error: error instanceof Error ? error.message : "Unknown error",
@@ -148,6 +150,7 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
   } catch (error) {
     // Handle question not found error
     if (error instanceof Error && error.message === "Question not found") {
+      // eslint-disable-next-line no-console
       console.error("[DELETE /api/questions/:id]", {
         questionId: params.id,
         error: "Question not found",
@@ -164,6 +167,7 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
     }
 
     // Handle other server errors
+    // eslint-disable-next-line no-console
     console.error("[DELETE /api/questions/:id]", {
       questionId: params.id,
       error: error instanceof Error ? error.message : "Unknown error",

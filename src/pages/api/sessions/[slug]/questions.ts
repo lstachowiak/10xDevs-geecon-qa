@@ -87,6 +87,7 @@ export const GET: APIRoute = async ({ params, request, locals }) => {
     });
   } catch (error) {
     // Log error for monitoring
+    // eslint-disable-next-line no-console
     console.error("[GET /api/sessions/:slug/questions]", {
       slug: params.slug,
       error: error instanceof Error ? error.message : "Unknown error",
@@ -179,6 +180,7 @@ export const POST: APIRoute = async ({ params, request, locals }) => {
     });
   } catch (error) {
     // Log error for debugging (in production, use proper logging service)
+    // eslint-disable-next-line no-console
     console.error("Error creating question:", error);
 
     const errorResponse: ErrorResponseDTO = {

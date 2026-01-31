@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Calendar, User, FileText, Send } from "lucide-react";
+import { Send } from "lucide-react";
 import type { CreateSessionCommand } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -87,8 +87,8 @@ export default function SessionForm({ onSubmit, isSubmitting }: SessionFormProps
     // Clear validation error for this field
     if (validationErrors[field]) {
       setValidationErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[field];
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { [field]: _, ...newErrors } = prev;
         return newErrors;
       });
     }
