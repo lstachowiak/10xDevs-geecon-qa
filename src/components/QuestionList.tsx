@@ -13,7 +13,7 @@ export function QuestionList({ questions, onUpvote }: QuestionListProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="questions-list">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Pytania</h2>
         <span className="text-sm text-muted-foreground">

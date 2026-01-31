@@ -72,6 +72,7 @@ export function SessionJoinForm() {
           aria-label="Pole do wprowadzenia kodu sesji"
           aria-describedby="session-code-hint"
           className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus-visible:border-blue-400 focus-visible:ring-blue-400/50"
+          data-testid="session-slug-input"
         />
         <p id="session-code-hint" className="text-xs text-blue-100/70">
           Wprowadź co najmniej 3 znaki
@@ -83,6 +84,7 @@ export function SessionJoinForm() {
         disabled={isButtonDisabled}
         className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
         aria-label="Przycisk dołączenia do sesji"
+        data-testid="session-join-button"
       >
         {viewModel.isLoading ? (
           <>

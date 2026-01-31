@@ -122,21 +122,58 @@ export function useSessionData(slug: string): UseSessionDataReturn {
         return;
       }
 
-      const response = await fetch(`/api/questions/${questionId}/upvote`, {
-        method: "POST",
-      });
-
-      if (!response.ok) {
-        throw new Error("Nie udało się zagłosować na pytanie");
-      }
-
+      // Optimistic update - mark as upvoted immediately
       const newUpvoted = new Set(upvotedQuestions);
       newUpvoted.add(questionId);
       setUpvotedQuestions(newUpvoted);
       saveUpvotedQuestions(newUpvoted);
 
-      // Refresh questions to get updated upvote count
-      await fetchQuestions();
+      // Optimistically update the UI
+      setQuestions((prevQuestions) =>
+        prevQuestions.map((q) =>
+          q.id === questionId
+            ? { ...q, upvoteCount: q.upvoteCount + 1, isUpvotedByUser: true }
+            : q
+        ).sort((a, b) => {
+          if (a.upvoteCount !== b.upvoteCount) {
+            return b.upvoteCount - a.upvoteCount;
+          }
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        })
+      );
+
+      try {
+        const response = await fetch(`/api/questions/${questionId}/upvote`, {
+          method: "POST",
+        });
+
+        if (!response.ok) {
+          // Rollback on error
+          const rolledBackUpvoted = new Set(upvotedQuestions);
+          setUpvotedQuestions(rolledBackUpvoted);
+          saveUpvotedQuestions(rolledBackUpvoted);
+          
+          setQuestions((prevQuestions) =>
+            prevQuestions.map((q) =>
+              q.id === questionId
+                ? { ...q, upvoteCount: q.upvoteCount - 1, isUpvotedByUser: false }
+                : q
+            ).sort((a, b) => {
+              if (a.upvoteCount !== b.upvoteCount) {
+                return b.upvoteCount - a.upvoteCount;
+              }
+              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+            })
+          );
+          
+          throw new Error("Nie udało się zagłosować na pytanie");
+        }
+
+        // Refresh questions to sync with server (in background)
+        fetchQuestions();
+      } catch (err) {
+        throw err;
+      }
     },
     [upvotedQuestions, fetchQuestions]
   );

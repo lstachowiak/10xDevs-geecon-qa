@@ -59,6 +59,7 @@ export function QuestionForm({ onSubmit }: QuestionFormProps) {
               disabled={isSubmitting}
               className="min-h-[100px]"
               aria-label="Treść pytania"
+              data-testid="question-content-input"
             />
           </div>
           <div className="space-y-2">
@@ -68,6 +69,7 @@ export function QuestionForm({ onSubmit }: QuestionFormProps) {
               onChange={(e) => setAuthorName(e.target.value)}
               disabled={isSubmitting}
               aria-label="Imię autora"
+              data-testid="question-author-input"
             />
           </div>
           {error && (
@@ -75,7 +77,7 @@ export function QuestionForm({ onSubmit }: QuestionFormProps) {
               {error}
             </p>
           )}
-          <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" disabled={isSubmitting} data-testid="question-submit-button">
             {isSubmitting ? "Wysyłanie..." : "Wyślij pytanie"}
           </Button>
         </form>
