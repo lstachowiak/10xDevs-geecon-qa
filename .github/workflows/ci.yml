@@ -1,16 +1,20 @@
-# .github/workflows/ci.yml
-name: CI
+name: Test & Build Master
 
 on: [push, pull_request]
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
+          cache: 'npm'
       - run: npm ci
       - run: npm run lint
       - run: npm run test
