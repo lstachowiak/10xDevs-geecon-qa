@@ -55,6 +55,7 @@ export const POST: APIRoute = async ({ params, locals }) => {
     // Log the error
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
 
+    // eslint-disable-next-line no-console
     console.error("[POST /api/questions/:id/upvote]", {
       questionId: params.id,
       error: errorMessage,

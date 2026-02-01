@@ -59,7 +59,7 @@ export function SessionJoinForm() {
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto space-y-4">
       <div className="space-y-2">
-        <label htmlFor="session-code" className="text-sm font-medium text-blue-100/90 block">
+        <label htmlFor="session-code" className="text-sm font-medium block">
           Kod sesji
         </label>
         <Input
@@ -71,10 +71,10 @@ export function SessionJoinForm() {
           disabled={viewModel.isLoading}
           aria-label="Pole do wprowadzenia kodu sesji"
           aria-describedby="session-code-hint"
-          className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus-visible:border-blue-400 focus-visible:ring-blue-400/50"
+          className="placeholder:text-white/50 focus-visible:border-blue-400 focus-visible:ring-blue-400/50"
           data-testid="session-slug-input"
         />
-        <p id="session-code-hint" className="text-xs text-blue-100/70">
+        <p id="session-code-hint" className="text-xs">
           Wprowadź co najmniej 3 znaki
         </p>
       </div>

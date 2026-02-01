@@ -5,25 +5,17 @@ import { AuthActions } from "@/components/AuthActions";
 const user = Astro.locals.user;
 ---
 
-<div
-  class="relative w-full mx-auto min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 p-4 sm:p-8 flex items-center justify-center"
->
+<div class="container mx-auto py-8 space-y-8 min-h-screen flex flex-col">
   <!-- Auth Actions - top right corner -->
-  <div class="absolute top-4 right-4 sm:top-8 sm:right-8 z-10">
+  <div class="flex justify-end">
     <AuthActions isAuthenticated={!!user} client:load />
   </div>
 
-  <div
-    class="relative max-w-2xl w-full mx-auto backdrop-blur-xl bg-gradient-to-b from-white/10 to-white/5 rounded-2xl shadow-2xl p-8 sm:p-12 text-white border border-white/10"
-  >
-    <div class="space-y-8">
+  <div class="flex-1 flex items-center justify-center">
+    <div class="max-w-2xl w-full space-y-8">
       <div class="text-center space-y-4">
-        <h1
-          class="text-4xl sm:text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-200 via-purple-200 to-pink-200 text-transparent bg-clip-text drop-shadow-lg"
-        >
-          Dołącz do sesji Q&A
-        </h1>
-        <p class="text-lg sm:text-xl text-blue-100/90 drop-shadow-md max-w-lg mx-auto">
+        <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold">Dołącz do sesji Q&A</h1>
+        <p class="text-lg sm:text-xl text-muted-foreground max-w-lg mx-auto">
           Wprowadź kod sesji, aby zadawać pytania i uczestniczyć w dyskusji
         </p>
       </div>
@@ -32,8 +24,8 @@ const user = Astro.locals.user;
         <SessionJoinForm client:load />
       </div>
 
-      <div class="pt-8 border-t border-white/10">
-        <p class="text-center text-sm text-blue-100/70">
+      <div class="pt-8 border-t">
+        <p class="text-center text-sm text-muted-foreground">
           Nie masz kodu sesji? Skontaktuj się z organizatorem konferencji.
         </p>
       </div>
